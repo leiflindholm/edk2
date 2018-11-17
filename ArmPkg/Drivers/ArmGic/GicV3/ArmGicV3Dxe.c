@@ -162,7 +162,7 @@ GicV3IrqInterruptHandler (
   IN EFI_SYSTEM_CONTEXT           SystemContext
   )
 {
-  UINT32                      GicInterrupt;
+  UINTN                       GicInterrupt;
   HARDWARE_INTERRUPT_HANDLER  InterruptHandler;
 
   GicInterrupt = ArmGicV3AcknowledgeInterrupt ();
@@ -380,10 +380,10 @@ GicV3DxeInitialize (
 {
   EFI_STATUS              Status;
   UINTN                   Index;
-  UINT32                  RegOffset;
+  UINTN                   RegOffset;
   UINTN                   RegShift;
-  UINT64                  CpuTarget;
-  UINT64                  MpId;
+  UINT32                  CpuTarget;
+  UINT32                  MpId;
 
   // Make sure the Interrupt Controller Protocol is not already installed in
   // the system.
@@ -437,7 +437,7 @@ GicV3DxeInitialize (
       }
     }
   } else {
-    MpId = ArmReadMpidr ();
+    MpId = (UINT32)ArmReadMpidr ();
     CpuTarget = MpId &
       (ARM_CORE_AFF0 | ARM_CORE_AFF1 | ARM_CORE_AFF2 | ARM_CORE_AFF3);
 

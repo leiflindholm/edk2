@@ -68,7 +68,7 @@ int fdt_setprop_inplace_namelen_partial(void *fdt, int nodeoffset,
 	if (!propval)
 		return proplen;
 
-	if (proplen < (len + idx))
+	if (proplen < (len + (int)idx))
 		return -FDT_ERR_NOSPACE;
 
 	memcpy((char *)propval + idx, val, len);
@@ -89,7 +89,7 @@ int fdt_setprop_inplace(void *fdt, int nodeoffset, const char *name,
 		return -FDT_ERR_NOSPACE;
 
 	return fdt_setprop_inplace_namelen_partial(fdt, nodeoffset, name,
-						   strlen(name), 0,
+						   (int)strlen(name), 0,
 						   val, len);
 }
 

@@ -11,7 +11,7 @@
  */
 
 #include <Uefi.h>
-#include <Include/libfdt.h>
+#include <libfdt.h>
 
 BOOLEAN
 FindMemnode (

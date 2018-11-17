@@ -54,7 +54,7 @@ GetNextEntryAttribute (
   IN     UINTN   EntryCount,
   IN     UINTN   TableLevel,
   IN     UINT64  BaseAddress,
-  IN OUT UINT32 *PrevEntryAttribute,
+  IN OUT UINT64 *PrevEntryAttribute,
   IN OUT UINT64 *StartGcdRegion
   )
 {
@@ -134,7 +134,7 @@ SyncCacheConfig (
   )
 {
   EFI_STATUS                          Status;
-  UINT32                              PageAttribute = 0;
+  UINT64                              PageAttribute = 0;
   UINT64                             *FirstLevelTableAddress;
   UINTN                               TableLevel;
   UINTN                               TableCount;

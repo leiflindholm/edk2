@@ -439,4 +439,4 @@
   #
   # EBC support
   #
-  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+#  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf

@@ -72,7 +72,7 @@ InitializeHighMemDxe (
       if (SizeCells > 1) {
         CurSize = (CurSize << 32) | SwapBytes32 (*Reg++);
       }
-      RegSize -= (AddressCells + SizeCells) * sizeof (UINT32);
+      RegSize -= (UINT32)((AddressCells + SizeCells) * sizeof (UINT32));
 
       Status = gDS->GetMemorySpaceDescriptor (CurBase, &GcdDescriptor);
       if (EFI_ERROR (Status)) {

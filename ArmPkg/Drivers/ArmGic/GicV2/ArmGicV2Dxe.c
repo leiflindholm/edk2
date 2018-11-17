@@ -31,8 +31,8 @@ Abstract:
 extern EFI_HARDWARE_INTERRUPT_PROTOCOL gHardwareInterruptV2Protocol;
 extern EFI_HARDWARE_INTERRUPT2_PROTOCOL gHardwareInterrupt2V2Protocol;
 
-STATIC UINT32 mGicInterruptInterfaceBase;
-STATIC UINT32 mGicDistributorBase;
+STATIC UINTN mGicInterruptInterfaceBase;
+STATIC UINTN mGicDistributorBase;
 
 /**
   Enable interrupt source Source.
@@ -144,7 +144,7 @@ GicV2EndOfInterrupt (
     return EFI_UNSUPPORTED;
   }
 
-  ArmGicV2EndOfInterrupt (mGicInterruptInterfaceBase, Source);
+  ArmGicV2EndOfInterrupt (mGicInterruptInterfaceBase, (UINT32)Source);
   return EFI_SUCCESS;
 }
 
@@ -168,7 +168,7 @@ GicV2IrqInterruptHandler (
   IN EFI_SYSTEM_CONTEXT           SystemContext
   )
 {
-  UINT32                      GicInterrupt;
+  UINTN                       GicInterrupt;
   HARDWARE_INTERRUPT_HANDLER  InterruptHandler;
 
   GicInterrupt = ArmGicV2AcknowledgeInterrupt (mGicInterruptInterfaceBase);
@@ -352,7 +352,7 @@ GicV2ExitBootServicesEvent (
   )
 {
   UINTN    Index;
-  UINT32   GicInterrupt;
+  UINTN    GicInterrupt;
 
   // Disable all the interrupts
   for (Index = 0; Index < mGicNumInterrupts; Index++) {
@@ -394,7 +394,7 @@ GicV2DxeInitialize (
 {
   EFI_STATUS              Status;
   UINTN                   Index;
-  UINT32                  RegOffset;
+  UINTN                   RegOffset;
   UINTN                   RegShift;
   UINT32                  CpuTarget;
 

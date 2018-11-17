@@ -85,7 +85,7 @@ MemoryPeim (
     BuildResourceDescriptorHob (
         EFI_RESOURCE_SYSTEM_MEMORY,
         ResourceAttributes,
-        (UINT64)MAX_ADDRESS + 1,
+        0,
         SystemMemoryTop - MAX_ADDRESS - 1
         );
   } else {

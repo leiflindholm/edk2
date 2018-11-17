@@ -314,7 +314,7 @@ static int overlay_update_local_node_references(void *fdto,
 			ret = fdt_setprop_inplace_namelen_partial(fdto,
 								  tree_node,
 								  name,
-								  strlen(name),
+								  (int)strlen(name),
 								  poffset,
 								  &adj_val,
 								  sizeof(adj_val));
@@ -498,7 +498,7 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
 		fixup_end = memchr(value, '\0', len);
 		if (!fixup_end)
 			return -FDT_ERR_BADOVERLAY;
-		fixup_len = fixup_end - fixup_str;
+		fixup_len = (uint32_t)(fixup_end - fixup_str);
 
 		len -= fixup_len + 1;
 		value += fixup_len + 1;
@@ -508,7 +508,7 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
 		if (!sep || *sep != ':')
 			return -FDT_ERR_BADOVERLAY;
 
-		path_len = sep - path;
+		path_len = (uint32_t)(sep - path);
 		if (path_len == (fixup_len - 1))
 			return -FDT_ERR_BADOVERLAY;
 
@@ -518,7 +518,7 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
 		if (!sep || *sep != ':')
 			return -FDT_ERR_BADOVERLAY;
 
-		name_len = sep - name;
+		name_len = (uint32_t)(sep - name);
 		if (!name_len)
 			return -FDT_ERR_BADOVERLAY;
 
@@ -791,7 +791,7 @@ static int overlay_symbol_update(void *fdt, void *fdto)
 			return -FDT_ERR_BADOVERLAY;
 
 		frag_name = path + 1;
-		frag_name_len = s - path - 1;
+		frag_name_len = (int)(s - path - 1);
 
 		/* verify format; safe since "s" lies in \0 terminated prop */
 		len = sizeof("/__overlay__/") - 1;
@@ -799,7 +799,7 @@ static int overlay_symbol_update(void *fdt, void *fdto)
 			return -FDT_ERR_BADOVERLAY;
 
 		rel_path = s + len;
-		rel_path_len = e - rel_path;
+		rel_path_len = (int)(e - rel_path);
 
 		/* find the fragment index in which the symbol lies */
 		ret = fdt_subnode_offset_namelen(fdto, 0, frag_name,
@@ -827,7 +827,7 @@ static int overlay_symbol_update(void *fdt, void *fdto)
 				return ret;
 			len = ret;
 		} else {
-			len = strlen(target_path);
+			len = (int)strlen(target_path);
 		}
 
 		ret = fdt_setprop_placeholder(fdt, root_sym, name,
@@ -894,7 +894,7 @@ int fdt_overlay_apply(void *fdt, void *fdto)
 	/*
 	 * The overlay has been damaged, erase its magic.
 	 */
-	fdt_set_magic(fdto, ~0);
+	fdt_set_magic(fdto, (uint32_t)~0);
 
 	return 0;
 
@@ -902,13 +902,13 @@ err:
 	/*
 	 * The overlay might have been damaged, erase its magic.
 	 */
-	fdt_set_magic(fdto, ~0);
+	fdt_set_magic(fdto, (uint32_t)~0);
 
 	/*
 	 * The base device tree might have been damaged, erase its
 	 * magic.
 	 */
-	fdt_set_magic(fdt, ~0);
+	fdt_set_magic(fdt, (uint32_t)~0);
 
 	return ret;
 }

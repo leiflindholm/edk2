@@ -98,7 +98,7 @@ InitializeFvAndVariableStoreHeaders (
                                       );
   FirmwareVolumeHeader->HeaderLength = sizeof(EFI_FIRMWARE_VOLUME_HEADER) + sizeof(EFI_FV_BLOCK_MAP_ENTRY);
   FirmwareVolumeHeader->Revision = EFI_FVH_REVISION;
-  FirmwareVolumeHeader->BlockMap[0].NumBlocks = Instance->Media.LastBlock + 1;
+  FirmwareVolumeHeader->BlockMap[0].NumBlocks = (UINT32)Instance->Media.LastBlock + 1;
   FirmwareVolumeHeader->BlockMap[0].Length      = Instance->Media.BlockSize;
   FirmwareVolumeHeader->BlockMap[1].NumBlocks = 0;
   FirmwareVolumeHeader->BlockMap[1].Length      = 0;

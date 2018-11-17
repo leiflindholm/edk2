@@ -109,8 +109,8 @@ InitializeMemory (
 
   SystemMemoryBase = (UINTN)PcdGet64 (PcdSystemMemoryBase);
   SystemMemoryTop = SystemMemoryBase + PcdGet64 (PcdSystemMemorySize);
-  if (SystemMemoryTop - 1 > MAX_ADDRESS) {
-    SystemMemoryTop = (UINT64)MAX_ADDRESS + 1;
+  if (SystemMemoryTop - 1 > MAX_UINT32 && MAX_ADDRESS == MAX_UINT32) {
+    SystemMemoryTop = (UINT64)MAX_UINT32 + 1;
   }
   FdBase = (UINTN)PcdGet64 (PcdFdBaseAddress);
   FdTop = FdBase + (UINTN)PcdGet32 (PcdFdSize);

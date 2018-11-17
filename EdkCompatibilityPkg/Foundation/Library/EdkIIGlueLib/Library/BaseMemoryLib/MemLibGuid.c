@@ -38,8 +38,8 @@ Abstract:
 GUID *
 EFIAPI
 CopyGuid (
-  OUT GUID       *DestinationGuid,
-  IN CONST GUID  *SourceGuid
+  OUT VOID       *DestinationGuid,
+  IN CONST VOID  *SourceGuid
   )
 {
   WriteUnaligned64 (

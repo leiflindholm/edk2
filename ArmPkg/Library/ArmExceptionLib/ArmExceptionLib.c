@@ -54,7 +54,7 @@ RETURN_STATUS ArchVectorConfig(
   );
 
 // these globals are provided by the architecture specific source (Arm or AArch64)
-extern UINTN                    gMaxExceptionNumber;
+extern EFI_EXCEPTION_TYPE       gMaxExceptionNumber;
 extern EFI_EXCEPTION_CALLBACK   gExceptionHandlers[];
 extern EFI_EXCEPTION_CALLBACK   gDebuggerExceptionHandlers[];
 extern PHYSICAL_ADDRESS         gExceptionVectorAlignmentMask;
@@ -160,7 +160,7 @@ CopyExceptionHandlers(
 {
   RETURN_STATUS        Status;
   UINTN                Length;
-  UINTN                Index;
+  INTN                 Index;
   UINT32               *VectorBase;
 
   // ensure that the destination value specifies an address meeting the vector alignment requirements

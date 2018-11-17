@@ -187,7 +187,7 @@ LibSetTime (
   )
 {
   EFI_STATUS  Status;
-  UINTN       EpochSeconds;
+  UINT64      EpochSeconds;
 
   // Because the PL031 is a 32-bit counter counting seconds,
   // the maximum time span is just over 136 years.
@@ -217,7 +217,7 @@ LibSetTime (
   }
 
   // Set the PL031
-  MmioWrite32 (mPL031RtcBase + PL031_RTC_LR_LOAD_REGISTER, EpochSeconds);
+  MmioWrite32 (mPL031RtcBase + PL031_RTC_LR_LOAD_REGISTER, (UINT32)EpochSeconds);
 
   return EFI_SUCCESS;
 }

@@ -56,15 +56,15 @@ static inline void *memmove(void *dest, const void *src, size_t n) {
 }
 
 static inline void *memset(void *s, int c, size_t n) {
-  return SetMem (s, n, c);
+  return SetMem (s, n, (UINT8)c);
 }
 
 static inline int memcmp(const void* dest, const void* src, int len) {
-  return CompareMem (dest, src, len);
+  return (int)CompareMem (dest, src, len);
 }
 
 static inline void *memchr(const void *s, int c, size_t n) {
-  return ScanMem8 (s, n, c);
+  return ScanMem8 (s, n, (UINT8)c);
 }
 
 static inline size_t strlen (const char* str) {
@@ -73,7 +73,7 @@ static inline size_t strlen (const char* str) {
 
 static inline char *strchr(const char *s, int c) {
   char pattern[2];
-  pattern[0] = c;
+  pattern[0] = (char)c;
   pattern[1] = 0;
   return AsciiStrStr (s, pattern);
 }

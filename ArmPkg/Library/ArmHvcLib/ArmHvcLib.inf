@@ -25,7 +25,8 @@
   Arm/ArmHvc.S      | GCC
 
 [Sources.AARCH64]
-  AArch64/ArmHvc.S
+  AArch64/ArmHvc.asm | MSFT
+  AArch64/ArmHvc.S   | GCC
 
 [Packages]
   MdePkg/MdePkg.dec

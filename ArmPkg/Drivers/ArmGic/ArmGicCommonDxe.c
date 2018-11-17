@@ -150,7 +150,7 @@ CpuArchEventProtocolNotify (
 
   // Register to receive interrupts
   Status = Cpu->RegisterInterruptHandler (Cpu, ARM_ARCH_EXCEPTION_IRQ,
-                  Context);
+                  (EFI_CPU_INTERRUPT_HANDLER)Context);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Cpu->RegisterInterruptHandler() - %r\n",
       __FUNCTION__, Status));
@@ -196,7 +196,7 @@ InstallAndRegisterInterruptService (
     &gEfiCpuArchProtocolGuid,
     TPL_CALLBACK,
     CpuArchEventProtocolNotify,
-    InterruptHandler,
+    (VOID *)InterruptHandler,
     &mCpuArchProtocolNotifyEventRegistration);
 
   // Register for an ExitBootServicesEvent

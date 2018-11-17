@@ -54,7 +54,7 @@ PlatformPeim (
   FdtPages = EFI_SIZE_TO_PAGES (FdtSize);
   NewBase = AllocatePages (FdtPages);
   ASSERT (NewBase != NULL);
-  fdt_open_into (Base, NewBase, EFI_PAGES_TO_SIZE (FdtPages));
+  fdt_open_into (Base, NewBase, (int)EFI_PAGES_TO_SIZE (FdtPages));
 
   FdtHobData = BuildGuidHob (&gFdtHobGuid, sizeof *FdtHobData);
   ASSERT (FdtHobData != NULL);

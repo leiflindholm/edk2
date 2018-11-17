@@ -34,5 +34,5 @@ unsigned long strtoul(const char *nptr, char **endptr, int base)
       return MAX_UINTN;
     }
 
-    return ReturnValue;
+    return (unsigned long)ReturnValue;
 }

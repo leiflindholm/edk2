@@ -177,7 +177,7 @@ int fdt_subnode_offset_namelen(const void *fdt, int offset,
 int fdt_subnode_offset(const void *fdt, int parentoffset,
 		       const char *name)
 {
-	return fdt_subnode_offset_namelen(fdt, parentoffset, name, strlen(name));
+	return fdt_subnode_offset_namelen(fdt, parentoffset, name, (int)strlen(name));
 }
 
 int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
@@ -195,7 +195,7 @@ int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
 		if (!q)
 			q = end;
 
-		p = fdt_get_alias_namelen(fdt, p, q - p);
+		p = fdt_get_alias_namelen(fdt, p, (int)(q - p));
 		if (!p)
 			return -FDT_ERR_BADPATH;
 		offset = fdt_path_offset(fdt, p);
@@ -215,7 +215,7 @@ int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
 		if (! q)
 			q = end;
 
-		offset = fdt_subnode_offset_namelen(fdt, offset, p, q-p);
+		offset = fdt_subnode_offset_namelen(fdt, offset, p, (int)(q - p));
 		if (offset < 0)
 			return offset;
 
@@ -227,7 +227,7 @@ int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
 
 int fdt_path_offset(const void *fdt, const char *path)
 {
-	return fdt_path_offset_namelen(fdt, path, strlen(path));
+	return fdt_path_offset_namelen(fdt, path, (int)strlen(path));
 }
 
 const char *fdt_get_name(const void *fdt, int nodeoffset, int *len)
@@ -240,7 +240,7 @@ const char *fdt_get_name(const void *fdt, int nodeoffset, int *len)
 			goto fail;
 
 	if (len)
-		*len = strlen(nh->name);
+		*len = (int)strlen(nh->name);
 
 	return nh->name;
 
@@ -318,7 +318,7 @@ const struct fdt_property *fdt_get_property(const void *fdt,
 					    const char *name, int *lenp)
 {
 	return fdt_get_property_namelen(fdt, nodeoffset, name,
-					strlen(name), lenp);
+					(int)strlen(name), lenp);
 }
 
 const void *fdt_getprop_namelen(const void *fdt, int nodeoffset,
@@ -349,7 +349,7 @@ const void *fdt_getprop_by_offset(const void *fdt, int offset,
 const void *fdt_getprop(const void *fdt, int nodeoffset,
 			const char *name, int *lenp)
 {
-	return fdt_getprop_namelen(fdt, nodeoffset, name, strlen(name), lenp);
+	return fdt_getprop_namelen(fdt, nodeoffset, name, (int)strlen(name), lenp);
 }
 
 uint32_t fdt_get_phandle(const void *fdt, int nodeoffset)
@@ -383,7 +383,7 @@ const char *fdt_get_alias_namelen(const void *fdt,
 
 const char *fdt_get_alias(const void *fdt, const char *name)
 {
-	return fdt_get_alias_namelen(fdt, name, strlen(name));
+	return fdt_get_alias_namelen(fdt, name, (int)strlen(name));
 }
 
 int fdt_get_path(const void *fdt, int nodeoffset, char *buf, int buflen)
@@ -549,7 +549,7 @@ int fdt_node_offset_by_phandle(const void *fdt, uint32_t phandle)
 
 int fdt_stringlist_contains(const char *strlist, int listlen, const char *str)
 {
-	int len = strlen(str);
+	int len = (int)strlen(str);
 	const char *p;
 
 	while (listlen >= len) {
@@ -558,7 +558,7 @@ int fdt_stringlist_contains(const char *strlist, int listlen, const char *str)
 		p = memchr(strlist, '\0', listlen);
 		if (!p)
 			return 0; /* malformed strlist.. */
-		listlen -= (p-strlist) + 1;
+		listlen -= (int)((p-strlist) + 1);
 		strlist = p + 1;
 	}
 	return 0;
@@ -576,7 +576,7 @@ int fdt_stringlist_count(const void *fdt, int nodeoffset, const char *property)
 	end = list + length;
 
 	while (list < end) {
-		length = strnlen(list, end - list) + 1;
+		length = (int)strnlen(list, end - list) + 1;
 
 		/* Abort if the last string isn't properly NUL-terminated. */
 		if (list + length > end)
@@ -599,11 +599,11 @@ int fdt_stringlist_search(const void *fdt, int nodeoffset, const char *property,
 	if (!list)
 		return length;
 
-	len = strlen(string) + 1;
+	len = (int)strlen(string) + 1;
 	end = list + length;
 
 	while (list < end) {
-		length = strnlen(list, end - list) + 1;
+		length = (int)strnlen(list, end - list) + 1;
 
 		/* Abort if the last string isn't properly NUL-terminated. */
 		if (list + length > end)
@@ -637,7 +637,7 @@ const char *fdt_stringlist_get(const void *fdt, int nodeoffset,
 	end = list + length;
 
 	while (list < end) {
-		length = strnlen(list, end - list) + 1;
+		length = (int)strnlen(list, end - list) + 1;
 
 		/* Abort if the last string isn't properly NUL-terminated. */
 		if (list + length > end) {

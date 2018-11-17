@@ -117,10 +117,10 @@ ArmGicGetMaxNumInterrupts (
 VOID
 EFIAPI
 ArmGicSendSgiTo (
-  IN  INTN          GicDistributorBase,
-  IN  INTN          TargetListFilter,
-  IN  INTN          CPUTargetList,
-  IN  INTN          SgiId
+  IN  UINTN           GicDistributorBase,
+  IN  UINT32          TargetListFilter,
+  IN  UINT32          CPUTargetList,
+  IN  UINT32          SgiId
   )
 {
   MmioWrite32 (
@@ -178,7 +178,7 @@ VOID
 EFIAPI
 ArmGicEndOfInterrupt (
   IN  UINTN                 GicInterruptInterfaceBase,
-  IN UINTN                  Source
+  IN  UINT32                Source
   )
 {
   ARM_GIC_ARCH_REVISION Revision;
@@ -207,7 +207,7 @@ ArmGicEnableInterrupt (
   UINTN                 GicCpuRedistributorBase;
 
   // Calculate enable register offset and bit position
-  RegOffset = Source / 32;
+  RegOffset = (UINT32)Source / 32;
   RegShift = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();
@@ -251,7 +251,7 @@ ArmGicDisableInterrupt (
   UINTN                 GicCpuRedistributorBase;
 
   // Calculate enable register offset and bit position
-  RegOffset = Source / 32;
+  RegOffset = (UINT32)Source / 32;
   RegShift = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();
@@ -295,7 +295,7 @@ ArmGicIsInterruptEnabled (
   UINT32                Interrupts;
 
   // Calculate enable register offset and bit position
-  RegOffset = Source / 32;
+  RegOffset = (UINT32)Source / 32;
   RegShift = Source % 32;
 
   Revision = ArmGicGetSupportedArchRevision ();

@@ -170,7 +170,7 @@ READ_LOCK_STATUS   = TRUE
   #
   # EBC support
   #
-  INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+#  INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 !endif
 
   #

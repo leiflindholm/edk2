@@ -29,7 +29,7 @@ VOID
 EFIAPI
 ArmGicV2EndOfInterrupt (
   IN  UINTN                 GicInterruptInterfaceBase,
-  IN UINTN                  Source
+  IN  UINT32                Source
   )
 {
   MmioWrite32 (GicInterruptInterfaceBase + ARM_GIC_ICCEIOR, Source);

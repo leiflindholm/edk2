@@ -34,7 +34,7 @@
   CapsuleService.c
   CapsuleService.h
 
-[Sources.Ia32, Sources.EBC, Sources.ARM, Sources.AARCH64]
+[Sources.Ia32, Sources.EBC]
   SaveLongModeContext.c
   CapsuleReset.c
 

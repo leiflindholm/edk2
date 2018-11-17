@@ -80,7 +80,7 @@ PeCoffLoaderRelocateImageExtraAction (
   )
 {
 #if !defined(MDEPKG_NDEBUG)
-  CHAR8 Temp[512];
+ // CHAR8 Temp[512];
 #endif
 
   if (ImageContext->PdbPointer) {
@@ -122,7 +122,7 @@ PeCoffLoaderUnloadImageExtraAction (
   )
 {
 #if !defined(MDEPKG_NDEBUG)
-  CHAR8 Temp[512];
+ // CHAR8 Temp[512];
 #endif
 
   if (ImageContext->PdbPointer) {

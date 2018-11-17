@@ -40,7 +40,7 @@
 #define ARM_GIC_ICDPPISR        0xD00 // PPI Status register
 
 // just one of these
-#define ARM_GIC_ICDSGIR         0xF00 // Software Generated Interrupt Register
+#define ARM_GIC_ICDSGIR         0xF00u // Software Generated Interrupt Register
 
 // GICv3 specific registers
 #define ARM_GICD_IROUTER        0x6100 // Interrupt Routing Registers
@@ -157,10 +157,10 @@ ArmGicGetMaxNumInterrupts (
 VOID
 EFIAPI
 ArmGicSendSgiTo (
-  IN  INTN          GicDistributorBase,
-  IN  INTN          TargetListFilter,
-  IN  INTN          CPUTargetList,
-  IN  INTN          SgiId
+  IN  UINTN          GicDistributorBase,
+  IN  UINT32         TargetListFilter,
+  IN  UINT32         CPUTargetList,
+  IN  UINT32         SgiId
   );
 
 /*
@@ -188,7 +188,7 @@ VOID
 EFIAPI
 ArmGicEndOfInterrupt (
   IN  UINTN                 GicInterruptInterfaceBase,
-  IN UINTN                  Source
+  IN  UINT32                Source
   );
 
 UINTN
@@ -259,7 +259,7 @@ VOID
 EFIAPI
 ArmGicV2EndOfInterrupt (
   IN UINTN                  GicInterruptInterfaceBase,
-  IN UINTN                  Source
+  IN UINT32                 Source
   );
 
 // GIC revision 3 specific declarations

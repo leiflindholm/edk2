@@ -154,13 +154,13 @@ static int _fdt_find_add_string(void *fdt, const char *s)
 	char *strtab = (char *)fdt + fdt_off_dt_strings(fdt);
 	const char *p;
 	char *new;
-	int len = strlen(s) + 1;
+	int len = (int)strlen(s) + 1;
 	int err;
 
 	p = _fdt_find_string(strtab, fdt_size_dt_strings(fdt), s);
 	if (p)
 		/* found it */
-		return (p - strtab);
+		return (int)(p - strtab);
 
 	new = strtab + fdt_size_dt_strings(fdt);
 	err = _fdt_splice_string(fdt, len);
@@ -168,7 +168,7 @@ static int _fdt_find_add_string(void *fdt, const char *s)
 		return err;
 
 	memcpy(new, s, len);
-	return (new - strtab);
+	return (int)(new - strtab);
 }
 
 int fdt_add_mem_rsv(void *fdt, uint64_t address, uint64_t size)
@@ -258,7 +258,7 @@ int fdt_set_name(void *fdt, int nodeoffset, const char *name)
 	if (!namep)
 		return oldlen;
 
-	newlen = strlen(name);
+	newlen = (int)strlen(name);
 
 	err = _fdt_splice_struct(fdt, namep, FDT_TAGALIGN(oldlen+1),
 				 FDT_TAGALIGN(newlen+1));
@@ -387,7 +387,7 @@ int fdt_add_subnode_namelen(void *fdt, int parentoffset,
 
 int fdt_add_subnode(void *fdt, int parentoffset, const char *name)
 {
-	return fdt_add_subnode_namelen(fdt, parentoffset, name, strlen(name));
+	return fdt_add_subnode_namelen(fdt, parentoffset, name, (int)strlen(name));
 }
 
 int fdt_del_node(void *fdt, int nodeoffset)

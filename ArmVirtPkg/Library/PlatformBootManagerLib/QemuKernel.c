@@ -1036,8 +1036,8 @@ TryRunningQemuKernel (
     //
     // Append ' initrd=<name>' in UTF-16.
     //
-    KernelLoadedImage->LoadOptionsSize +=
-                                        (8 + StrLen(InitrdBlob->Name)) * 2;
+    KernelLoadedImage->LoadOptionsSize += (UINT32)
+                                        ((UINTN)8 + (UINTN)StrLen (InitrdBlob->Name)) * (UINTN)2;
   }
 
   if (KernelLoadedImage->LoadOptionsSize == 0) {

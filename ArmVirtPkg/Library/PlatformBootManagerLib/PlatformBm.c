@@ -741,8 +741,8 @@ PlatformBootManagerBeforeConsole (
   //
   // Add the hardcoded serial console device path to ConIn, ConOut, ErrOut.
   //
-  CopyGuid (&mSerialConsole.TermType.Guid,
-    PcdGetPtr (PcdTerminalTypeGuidBuffer));
+  CopyGuid (&(mSerialConsole.TermType.Guid),
+	  PcdGetPtr(PcdTerminalTypeGuidBuffer));
   EfiBootManagerUpdateConsoleVariable (ConIn,
     (EFI_DEVICE_PATH_PROTOCOL *)&mSerialConsole, NULL);
   EfiBootManagerUpdateConsoleVariable (ConOut,

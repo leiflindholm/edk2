@@ -448,12 +448,12 @@ EFI_STATUS
 NorFlashWriteBuffer (
   IN NOR_FLASH_INSTANCE     *Instance,
   IN UINTN                  TargetAddress,
-  IN UINTN                  BufferSizeInBytes,
+  IN UINT32                 BufferSizeInBytes,
   IN UINT32                 *Buffer
   )
 {
   EFI_STATUS            Status;
-  UINTN                 BufferSizeInWords;
+  UINT32                BufferSizeInWords;
   UINTN                 Count;
   volatile UINT32       *Data;
   UINTN                 WaitForBuffer;
@@ -510,7 +510,7 @@ NorFlashWriteBuffer (
   }
 
   // From now on we work in 32-bit words
-  BufferSizeInWords = BufferSizeInBytes / (UINTN)4;
+  BufferSizeInWords = BufferSizeInBytes / (UINT32)4;
 
   // Write the word count, which is (buffer_size_in_words - 1),
   // because word count 0 means one word.
@@ -579,7 +579,7 @@ NorFlashWriteFullBlock (
   UINTN         BufferIndex;
   UINTN         BlockAddress;
   UINTN         BuffersInBlock;
-  UINTN         RemainingWords;
+  UINT32        RemainingWords;
   EFI_TPL       OriginalTPL;
   UINTN         Cnt;
 
@@ -1309,7 +1309,7 @@ NorFlashInitialise (
       NorFlashDevices[Index].RegionBaseAddress,
       NorFlashDevices[Index].Size,
       Index,
-      NorFlashDevices[Index].BlockSize,
+      (UINT32)NorFlashDevices[Index].BlockSize,
       ContainVariableStorage,
       &NorFlashDevices[Index].Guid,
       &mNorFlashInstances[Index]
