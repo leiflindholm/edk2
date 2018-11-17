@@ -2,5 +2,5 @@ Build/
 tags/
 .DS_Store
 .vs
-.idb
-.pdb
+*.idb
+*.pdb
