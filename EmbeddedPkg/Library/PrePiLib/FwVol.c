@@ -420,8 +420,6 @@ FfsProcessSection (
       // Call decompress function
       //
       if (Section->Type == EFI_SECTION_COMPRESSION) {
-        CompressedData = (VOID *)((UINTN)Section + FfsCompressionSectionHeaderSize (Section));
-
         Status = UefiDecompress (
                    CompressedData,
                    DstBuffer,
