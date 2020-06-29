@@ -317,8 +317,9 @@ FfsProcessSection (
       }
 
       return EFI_SUCCESS;
-    } else if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type == EFI_SECTION_GUID_DEFINED)) {
+    }
 
+    if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type == EFI_SECTION_GUID_DEFINED)) {
       if (Section->Type == EFI_SECTION_COMPRESSION) {
         if (IS_SECTION2 (Section)) {
           CompressionSection2 = (EFI_COMPRESSION_SECTION2 *) Section;
