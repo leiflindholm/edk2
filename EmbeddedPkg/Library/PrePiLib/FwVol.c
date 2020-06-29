@@ -266,6 +266,57 @@ FindFileEx (
   return EFI_NOT_FOUND;
 }
 
+STATIC
+UINTN
+FfsSectionHeaderSize (
+  IN EFI_COMMON_SECTION_HEADER                *Section
+  )
+{
+  if (IS_SECTION2 (Section)) {
+    return sizeof (EFI_COMMON_SECTION_HEADER2);
+  }
+
+  return sizeof (EFI_COMMON_SECTION_HEADER);
+}
+
+STATIC
+UINTN
+FfsSectionLength (
+  IN EFI_COMMON_SECTION_HEADER                *Section
+  )
+{
+  if (IS_SECTION2 (Section)) {
+    return SECTION2_SIZE (Section);
+  }
+
+  return SECTION_SIZE (Section);
+}
+
+STATIC
+UINTN
+FfsSectionCompressionType (
+  IN  EFI_COMMON_SECTION_HEADER               *Section
+  )
+{
+  if (IS_SECTION2 (Section)) {
+    return ((EFI_COMPRESSION_SECTION2 *)Section)->CompressionType;
+  }
+
+  return ((EFI_COMPRESSION_SECTION *)Section)->CompressionType;
+}
+
+STATIC
+UINTN
+FfsCompressionSectionHeaderSize (
+  IN  EFI_COMMON_SECTION_HEADER               *Section
+  )
+{
+  if (IS_SECTION2 (Section)) {
+    return sizeof (EFI_COMPRESSION_SECTION2);
+  }
+
+  return sizeof (EFI_COMPRESSION_SECTION);
+}
 
 /**
   Go through the file to search SectionType section,
@@ -289,8 +340,6 @@ FfsProcessSection (
   EFI_STATUS                              Status;
   UINT32                                  SectionLength;
   UINT32                                  ParsedLength;
-  EFI_COMPRESSION_SECTION                 *CompressionSection;
-  EFI_COMPRESSION_SECTION2                *CompressionSection2;
   UINT32                                  DstBufferSize;
   VOID                                    *ScratchBuffer;
   UINT32                                  ScratchBufferSize;
@@ -310,38 +359,21 @@ FfsProcessSection (
     }
 
     if (Section->Type == SectionType) {
-      if (IS_SECTION2 (Section)) {
-        *OutputBuffer = (VOID *)((UINT8 *) Section + sizeof (EFI_COMMON_SECTION_HEADER2));
-      } else {
-        *OutputBuffer = (VOID *)((UINT8 *) Section + sizeof (EFI_COMMON_SECTION_HEADER));
-      }
+      *OutputBuffer = (VOID *)((UINT8 *)Section + FfsSectionHeaderSize (Section));
 
       return EFI_SUCCESS;
     }
 
     if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type == EFI_SECTION_GUID_DEFINED)) {
       if (Section->Type == EFI_SECTION_COMPRESSION) {
-        if (IS_SECTION2 (Section)) {
-          CompressionSection2 = (EFI_COMPRESSION_SECTION2 *) Section;
-          SectionLength       = SECTION2_SIZE (Section);
+        SectionLength = FfsSectionLength (Section);
 
-          if (CompressionSection2->CompressionType != EFI_STANDARD_COMPRESSION) {
-            return EFI_UNSUPPORTED;
-          }
-
-          CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION2 *) Section + 1);
-          CompressedDataLength = (UINT32) SectionLength - sizeof (EFI_COMPRESSION_SECTION2);
-        } else {
-          CompressionSection  = (EFI_COMPRESSION_SECTION *) Section;
-          SectionLength       = SECTION_SIZE (Section);
-
-          if (CompressionSection->CompressionType != EFI_STANDARD_COMPRESSION) {
-            return EFI_UNSUPPORTED;
-          }
-
-          CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION *) Section + 1);
-          CompressedDataLength = (UINT32) SectionLength - sizeof (EFI_COMPRESSION_SECTION);
+        if (FfsSectionCompressionType (Section) != EFI_STANDARD_COMPRESSION) {
+          return EFI_UNSUPPORTED;
         }
+
+        CompressedData = (VOID *)((UINTN)Section + FfsCompressionSectionHeaderSize (Section));
+        CompressedDataLength = SectionLength - FfsCompressionSectionHeaderSize (Section);
 
         Status = UefiDecompressGetInfo (
                    CompressedData,
@@ -383,19 +415,12 @@ FfsProcessSection (
       // DstBuffer still is one section. Adjust DstBuffer offset, skip EFI section header
       // to make section data at page alignment.
       //
-      if (IS_SECTION2 (Section))
-        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE - sizeof (EFI_COMMON_SECTION_HEADER2);
-      else
-        DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE - sizeof (EFI_COMMON_SECTION_HEADER);
+      DstBuffer = (UINT8 *)DstBuffer + EFI_PAGE_SIZE - FfsSectionHeaderSize (Section);
       //
       // Call decompress function
       //
       if (Section->Type == EFI_SECTION_COMPRESSION) {
-        if (IS_SECTION2 (Section)) {
-          CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION2 *) Section + 1);
-        } else {
-          CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION *) Section + 1);
-        }
+        CompressedData = (VOID *)((UINTN)Section + FfsCompressionSectionHeaderSize (Section));
 
         Status = UefiDecompress (
                    CompressedData,
@@ -427,11 +452,7 @@ FfsProcessSection (
        }
     }
 
-    if (IS_SECTION2 (Section)) {
-      SectionLength = SECTION2_SIZE (Section);
-    } else {
-      SectionLength = SECTION_SIZE (Section);
-    }
+    SectionLength = FfsSectionLength (Section);
     //
     // SectionLength is adjusted it is 4 byte aligned.
     // Go to the next section
