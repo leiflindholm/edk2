@@ -361,7 +361,7 @@ FfsProcessSection (
         //
         // GetInfo failed
         //
-        DEBUG ((EFI_D_ERROR, "Decompress GetInfo Failed - %r\n", Status));
+        DEBUG ((DEBUG_ERROR, "Decompress GetInfo Failed - %r\n", Status));
         return EFI_NOT_FOUND;
       }
       //
@@ -392,38 +392,37 @@ FfsProcessSection (
       if (Section->Type == EFI_SECTION_COMPRESSION) {
         if (IS_SECTION2 (Section)) {
           CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION2 *) Section + 1);
-        }
-        else {
+        } else {
           CompressedData = (CHAR8 *) ((EFI_COMPRESSION_SECTION *) Section + 1);
         }
 
         Status = UefiDecompress (
-                    CompressedData,
-                    DstBuffer,
-                    ScratchBuffer
-                    );
+                   CompressedData,
+                   DstBuffer,
+                   ScratchBuffer
+                   );
       } else if (Section->Type == EFI_SECTION_GUID_DEFINED) {
         Status = ExtractGuidedSectionDecode (
-                    Section,
-                    &DstBuffer,
-                    ScratchBuffer,
-                    &AuthenticationStatus
-                    );
+                   Section,
+                   &DstBuffer,
+                   ScratchBuffer,
+                   &AuthenticationStatus
+                   );
       }
 
       if (EFI_ERROR (Status)) {
         //
         // Decompress failed
         //
-        DEBUG ((EFI_D_ERROR, "Decompress Failed - %r\n", Status));
+        DEBUG ((DEBUG_ERROR, "Decompress Failed - %r\n", Status));
         return EFI_NOT_FOUND;
       } else {
         return FfsProcessSection (
-                SectionType,
-                DstBuffer,
-                DstBufferSize,
-                OutputBuffer
-                );
+                 SectionType,
+                 DstBuffer,
+                 DstBufferSize,
+                 OutputBuffer
+                 );
        }
     }
 
@@ -756,17 +755,14 @@ FfsAnyFvFindFirstFile (
   Instance    = 0;
   *FileHandle = NULL;
 
-  while (1)
-  {
+  while (1) {
     Status = FfsFindNextVolume (Instance++, VolumeHandle);
-    if (EFI_ERROR (Status))
-    {
+    if (EFI_ERROR (Status)) {
       break;
     }
 
     Status = FfsFindNextFile (FileType, *VolumeHandle, FileHandle);
-    if (!EFI_ERROR (Status))
-    {
+    if (!EFI_ERROR (Status)) {
       break;
     }
   }
