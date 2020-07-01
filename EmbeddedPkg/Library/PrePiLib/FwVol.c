@@ -318,6 +318,50 @@ FfsCompressionSectionHeaderSize (
   return sizeof (EFI_COMPRESSION_SECTION);
 }
 
+STATIC
+EFI_STATUS
+FfsGetExtractionInfo (
+  IN      EFI_COMMON_SECTION_HEADER               *Section,
+  OUT     UINT32                                  *SectionLength,
+  IN OUT  VOID                                    **SrcBuffer,
+  OUT     UINT32                                  *DstBufferSize,
+  OUT     UINT32                                  *ScratchBufferSize
+  )
+{
+  EFI_STATUS  Status;
+
+  if (Section->Type == EFI_SECTION_COMPRESSION) {
+    *SectionLength = FfsSectionLength (Section);
+
+    if (FfsSectionCompressionType (Section) != EFI_STANDARD_COMPRESSION) {
+      return EFI_UNSUPPORTED;
+    }
+
+    *SrcBuffer = (VOID *)((UINTN)Section + FfsCompressionSectionHeaderSize (Section));
+    Status = UefiDecompressGetInfo (
+               *SrcBuffer,
+               *SectionLength - FfsCompressionSectionHeaderSize (Section),
+               DstBufferSize,
+               ScratchBufferSize
+               );
+  } else if (Section->Type == EFI_SECTION_GUID_DEFINED) {
+    UINT16 Ignored;
+
+    *SrcBuffer = Section;
+
+    Status = ExtractGuidedSectionGetInfo (
+               *SrcBuffer,
+               DstBufferSize,
+               ScratchBufferSize,
+               &Ignored      // SectionAttribute not used by this library
+               );
+  } else {
+    Status = EFI_UNSUPPORTED;
+  }
+
+  return Status;
+}
+
 /**
   Go through the file to search SectionType section,
   when meeting an encapsuled section.
@@ -344,15 +388,11 @@ FfsProcessSection (
   VOID                                    *ScratchBuffer;
   UINT32                                  ScratchBufferSize;
   VOID                                    *DstBuffer;
-  UINT16                                  SectionAttribute;
-  UINT32                                  AuthenticationStatus;
-  CHAR8                                   *CompressedData;
-  UINTN                                   CompressedDataLength;
-
+  VOID                                    *SrcBuffer;
 
   *OutputBuffer = NULL;
   ParsedLength  = 0;
-  Status        = EFI_NOT_FOUND;
+
   while (ParsedLength < SectionSize) {
     if (IS_SECTION2 (Section)) {
       ASSERT (SECTION2_SIZE (Section) > 0x00FFFFFF);
@@ -364,32 +404,11 @@ FfsProcessSection (
       return EFI_SUCCESS;
     }
 
+    SectionLength = FfsSectionLength (Section);
+
     if ((Section->Type == EFI_SECTION_COMPRESSION) || (Section->Type == EFI_SECTION_GUID_DEFINED)) {
-      if (Section->Type == EFI_SECTION_COMPRESSION) {
-        SectionLength = FfsSectionLength (Section);
-
-        if (FfsSectionCompressionType (Section) != EFI_STANDARD_COMPRESSION) {
-          return EFI_UNSUPPORTED;
-        }
-
-        CompressedData = (VOID *)((UINTN)Section + FfsCompressionSectionHeaderSize (Section));
-        CompressedDataLength = SectionLength - FfsCompressionSectionHeaderSize (Section);
-
-        Status = UefiDecompressGetInfo (
-                   CompressedData,
-                   CompressedDataLength,
-                   &DstBufferSize,
-                   &ScratchBufferSize
-                   );
-      } else if (Section->Type == EFI_SECTION_GUID_DEFINED) {
-        Status = ExtractGuidedSectionGetInfo (
-                   Section,
-                   &DstBufferSize,
-                   &ScratchBufferSize,
-                   &SectionAttribute
-                   );
-      }
-
+      Status = FfsGetExtractionInfo (Section, &SectionLength, &SrcBuffer,
+                                     &DstBufferSize, &ScratchBufferSize);
       if (EFI_ERROR (Status)) {
         //
         // GetInfo failed
@@ -421,16 +440,18 @@ FfsProcessSection (
       //
       if (Section->Type == EFI_SECTION_COMPRESSION) {
         Status = UefiDecompress (
-                   CompressedData,
+                   SrcBuffer,
                    DstBuffer,
                    ScratchBuffer
                    );
       } else if (Section->Type == EFI_SECTION_GUID_DEFINED) {
+        UINT32  Ignored;
+
         Status = ExtractGuidedSectionDecode (
-                   Section,
+                   SrcBuffer,
                    &DstBuffer,
                    ScratchBuffer,
-                   &AuthenticationStatus
+                   &Ignored  // AuthenticationStatus not used by this library
                    );
       }
 
@@ -450,7 +471,6 @@ FfsProcessSection (
        }
     }
 
-    SectionLength = FfsSectionLength (Section);
     //
     // SectionLength is adjusted it is 4 byte aligned.
     // Go to the next section
