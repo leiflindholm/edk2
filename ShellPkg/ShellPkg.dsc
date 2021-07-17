@@ -63,6 +63,8 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
+  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+
 [LibraryClasses.ARM,LibraryClasses.AARCH64]
   #
   # It is not possible to prevent the ARM compiler for generic intrinsic functions.
@@ -153,6 +155,8 @@
   }
   ShellPkg/DynamicCommand/DpDynamicCommand/DpApp.inf
   ShellPkg/Application/AcpiViewApp/AcpiViewApp.inf
+
+  ShellPkg/Application/ShowUSB/ShowUSB.inf
 
 [BuildOptions]
   *_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES
