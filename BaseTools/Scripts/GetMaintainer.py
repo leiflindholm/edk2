@@ -179,6 +179,10 @@ if __name__ == '__main__':
     PARSER.add_argument('-l', '--lookup',
                         help='Find section matches for path LOOKUP',
                         required=False)
+    PARSER.add_argument('-F', '--forge-username',
+                        action="store_true",
+                        help='Display forge username instead of email address',
+                        required=False)
     ARGS = PARSER.parse_args()
 
     REPO = SetupGit.locate_repo()
@@ -202,6 +206,12 @@ if __name__ == '__main__':
     ADDRESSES.sort()
 
     for address in ADDRESSES:
-        if '<' in address and '>' in address:
-            address = address.split('>', 1)[0] + '>'
-        print('  %s' % address)
+        output = ''
+        if ARGS.forge_username:
+            if '[' in address and ']' in address:
+                output = address[address.find('[')+1:address.find(']')]
+        else:
+            if '<' in address and '>' in address:
+                output = address.split('>', 1)[0] + '>'
+        if output:
+            print('  %s' % output)
