@@ -6,8 +6,9 @@
 
 **/
 
-#include <libfdt/libfdt/libfdt.h>
 #include <Uefi/UefiBaseType.h>
+#include <libfdt/libfdt/libfdt.h>
+#include <libfdt/libfdt/libfdt_internal.h>
 
 /**
   Convert UINT16 data of the FDT blob to little-endian
@@ -445,6 +446,47 @@ FdtSetProp (
 }
 
 /**
+  Delete a property.
+
+  This function will delete data from the blob, and will therefore
+  change the offsets of some existing nodes.
+
+  @param[in][out] Fdt         Pointer to the device tree blob.
+  @param[in]      NodeOffset  Offset of the node whose property to nop.
+  @param[in]      Name        Name of the property to nop.
+
+  @return  Zero for successfully, otherwise failed.
+
+**/
+INT32
+FdtDelProp (
+  IN OUT VOID         *Fdt,
+  IN     INT32        NodeOffset,
+  IN     CONST CHAR8  *Name
+  )
+{
+  return fdt_delprop (Fdt, NodeOffset, Name);
+}
+
+/**
+  Finds a tree node by its full path.
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] Path           Full path of the node to locate.
+
+  @return structure block offset of the node with the requested path (>=0), on success
+**/
+INT32
+EFIAPI
+FdtPathOffset (
+  IN VOID         *Fdt,
+  IN CONST CHAR8  *Path
+  )
+{
+  return fdt_path_offset (Fdt, Path);
+}
+
+/**
   Returns the name of a given node.
 
   @param[in] Fdt            The pointer to FDT blob.
@@ -502,4 +544,14 @@ FdtNodeOffsetByCompatible (
   )
 {
   return fdt_node_offset_by_compatible (Fdt, StartOffset, Compatible);
+}
+
+/* Debug functions. */
+CONST
+CHAR8
+*FdtStrerror(
+  IN INT32 ErrVal
+  )
+{
+  return fdt_strerror (ErrVal);
 }

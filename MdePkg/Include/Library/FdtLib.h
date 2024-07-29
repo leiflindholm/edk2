@@ -433,6 +433,41 @@ FdtSetProp (
   );
 
 /**
+  Delete a property.
+
+  This function will delete data from the blob, and will therefore
+  change the offsets of some existing nodes.
+
+  @param[in][out] Fdt         Pointer to the device tree blob.
+  @param[in]      NodeOffset  Offset of the node whose property to nop.
+  @param[in]      Name        Name of the property to nop.
+
+  @return  Zero for successfully, otherwise failed.
+
+**/
+INT32
+FdtDelProp (
+  IN OUT VOID         *Fdt,
+  IN     INT32        NodeOffset,
+  IN     CONST CHAR8  *Name
+  );
+
+/**
+  Finds a tree node by its full path.
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] Path           Full path of the node to locate.
+
+  @return structure block offset of the node with the requested path (>=0), on success
+**/
+INT32
+EFIAPI
+FdtPathOffset (
+  IN VOID         *Fdt,
+  IN CONST CHAR8  *Path
+  );
+
+/**
   Returns the name of a given node.
 
   @param[in] Fdt            The pointer to FDT blob.
@@ -481,6 +516,13 @@ FdtNodeOffsetByCompatible (
   IN CONST VOID   *Fdt,
   IN INT32        StartOffset,
   IN CONST CHAR8  *Compatible
+  );
+
+/* Debug functions. */
+CONST
+CHAR8
+*FdtStrerror(
+  IN INT32 ErrVal
   );
 
 #endif /* FDT_LIB_H_ */
