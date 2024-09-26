@@ -187,6 +187,26 @@ FdtPack (
 }
 
 /**
+  Returns a pointer to the node at a given offset.
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] Offset         The offset to node.
+  @param[in] Length         Maximum length of node.
+
+  @return pointer to node.
+**/
+CONST VOID *
+EFIAPI
+FdtOffsetPointer (
+  IN CONST VOID  *Fdt,
+  IN INT32       Offset,
+  IN UINT32      Length
+  )
+{
+  return fdt_offset_ptr (Fdt, Offset, Length);
+}
+
+/**
   Returns a offset of next node from the given node.
 
   @param[in] Fdt            The pointer to FDT blob.
