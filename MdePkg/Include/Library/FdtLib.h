@@ -654,7 +654,7 @@ FdtPathOffsetNameLen (
 INT32
 EFIAPI
 FdtPathOffset (
-  IN VOID         *Fdt,
+  IN CONST VOID   *Fdt,
   IN CONST CHAR8  *Path
   );
 
