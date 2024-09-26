@@ -350,6 +350,24 @@ FdtSubnodeOffset (
 }
 
 /**
+  Find the parent of a given node.
+
+  @param[in] Fdt             The pointer to FDT blob.
+  @param[in] NodeOffset      The offset to the node to find the parent for.
+
+  @return Structure block offset, or negative return value.
+**/
+INT32
+EFIAPI
+FdtParentOffset (
+  IN CONST VOID   *Fdt,
+  IN INT32        NodeOffset
+  )
+{
+  return fdt_parent_offset (Fdt, NodeOffset);
+}
+
+/**
   Returns a offset of first node which includes the given property name and value.
 
   @param[in] Fdt             The pointer to FDT blob.
