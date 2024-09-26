@@ -149,6 +149,27 @@ FdtCreateEmptyTree (
 }
 
 /**
+  Unpack FDT blob into new buffer
+
+  @param[in]  Fdt            The pointer to FDT blob.
+  @param[out] Buffer         Pointer to destination buffer.
+  @param[in]  BufferSize     The size of destination buffer.
+
+  @return Zero for successfully, otherwise failed.
+
+ **/
+INT32
+EFIAPI
+FdtOpenInto (
+  IN  CONST VOID  *Fdt,
+  OUT VOID        *Buffer,
+  IN  INT32       BufferSize
+  )
+{
+  return fdt_open_into (Fdt, Buffer, BufferSize);
+}
+
+/**
   Returns a offset of next node from the given node.
 
   @param[in] Fdt            The pointer to FDT blob.
