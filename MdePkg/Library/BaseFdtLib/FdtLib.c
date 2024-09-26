@@ -375,6 +375,24 @@ FdtNodeOffsetByPropValue (
 }
 
 /**
+  Returns a offset of first node which includes the given property name and value.
+
+  @param[in] Fdt             The pointer to FDT blob.
+  @param[in] Phandle         Phandle value to search for.
+
+  @return The offset to node with matching Phandle value.
+**/
+INT32
+EFIAPI
+FdtNodeOffsetByPhandle (
+  IN CONST VOID   *Fdt,
+  IN UINT32       Phandle
+  )
+{
+  return fdt_node_offset_by_phandle (Fdt, Phandle);
+}
+
+/**
   Look for a string in  a stringlist
 
   @param[in] StringList     Pointer to stringlist to search.
