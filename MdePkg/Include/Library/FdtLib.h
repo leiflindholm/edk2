@@ -276,6 +276,19 @@ FdtOpenInto (
   );
 
 /**
+  Pack FDT blob in place.
+
+  @param[in][out]  Fdt            The pointer to FDT blob.
+
+  @return Zero.
+**/
+INT32
+EFIAPI
+FdtPack (
+  IN OUT VOID *Fdt
+  );
+
+/**
   Create a empty Flattened Device Tree.
 
   @param[in] Buffer         The pointer to allocate a pool for FDT blob.
