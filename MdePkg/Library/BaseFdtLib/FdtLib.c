@@ -514,6 +514,31 @@ FdtSetPropU64 (
 }
 
 /**
+  Append or create a property in the given node.
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] NodeOffset     The offset to the node offset which want to add in.
+  @param[in] Name           The name to name the property.
+  @param[in] Value          The value (big-endian) to the property value.
+  @param[in] Length         The length to the size of the property.
+
+  @return  Zero for successfully, otherwise failed.
+
+ **/
+INT32
+EFIAPI
+FdtAppendProp (
+  IN VOID         *Fdt,
+  IN INT32        NodeOffset,
+  IN CONST CHAR8  *Name,
+  IN CONST VOID   *Value,
+  IN UINT32       Length
+  )
+{
+  return fdt_appendprop (Fdt, NodeOffset, Name, Value, (int)Length);
+}
+
+/**
   Delete a property.
 
   This function will delete data from the blob, and will therefore
