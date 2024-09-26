@@ -38,7 +38,7 @@
   OvmfPkg/OvmfPkg.dec
 
 [LibraryClasses]
-  BaseLib
+  BaseMemoryLib
   DebugLib
   FdtLib
   ArmLib
