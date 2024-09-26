@@ -349,7 +349,7 @@ FdtNodeOffsetByPropValue (
           come from FDT blob, it's encoding with big-endian.
 
 **/
-CONST FDT_PROP *
+CONST FDT_PROPERTY *
 EFIAPI
 FdtGetProperty (
   IN CONST VOID   *Fdt,
@@ -409,7 +409,7 @@ FdtNextPropertyOffset (
   @return The property to the structure of the given property offset.
 
 **/
-CONST FDT_PROP *
+CONST FDT_PROPERTY *
 EFIAPI
 FdtGetPropertyByOffset (
   IN CONST VOID  *Fdt,
