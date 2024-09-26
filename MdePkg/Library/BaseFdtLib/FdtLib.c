@@ -362,6 +362,28 @@ FdtGetProperty (
 }
 
 /**
+  Returns a pointer to a node mapped to an alias matching a substring.
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] Name           The alias name string.
+  @param[in] Length         The length to the size of the property found.
+
+  @return A pointer to the expansion of the alias matching the substring,
+          or NULL if alias not found.
+
+**/
+CONST CHAR8 *
+EFIAPI
+FdtGetAliasNameLen (
+  IN CONST VOID  *Fdt,
+  IN CONST CHAR8 *Name,
+  IN INT32       Length
+  )
+{
+  return fdt_get_alias_namelen (Fdt, Name, Length);
+}
+
+/**
   Returns a offset of first property in the given node.
 
   @param[in] Fdt            The pointer to FDT blob.
