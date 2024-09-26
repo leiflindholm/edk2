@@ -627,6 +627,23 @@ FdtDelProp (
   );
 
 /**
+  Finds a tree node by substring
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] Path           Full path of the node to locate.
+  @param[in] NameLength      The length of the name to check only.
+
+  @return structure block offset of the node with the requested path (>=0), on success
+**/
+INT32
+EFIAPI
+FdtPathOffsetNameLen (
+  IN CONST VOID   *Fdt,
+  IN CONST CHAR8  *Path,
+  IN INT32        NameLength
+  );
+
+/**
   Finds a tree node by its full path.
 
   @param[in] Fdt            The pointer to FDT blob.
