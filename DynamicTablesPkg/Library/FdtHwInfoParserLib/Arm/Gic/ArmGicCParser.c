@@ -12,6 +12,7 @@
 **/
 
 #include <Library/ArmLib.h>
+#include <Library/FdtLib.h>
 #include "FdtHwInfoParser.h"
 #include "CmObjectDescUtility.h"
 #include "Arm/Gic/ArmGicCParser.h"
@@ -91,7 +92,7 @@ CpuNodeParser (
     return EFI_INVALID_PARAMETER;
   }
 
-  Data = fdt_getprop (Fdt, CpuNode, "reg", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, CpuNode, "reg", &DataSize);
   if ((Data == NULL)                  ||
       ((DataSize != sizeof (UINT32))  &&
        (DataSize != sizeof (UINT64))))
@@ -107,10 +108,10 @@ CpuNodeParser (
      bits [23:0] of MPIDR_EL1.
    */
   if (AddressCells == 2) {
-    MpIdr         = fdt64_to_cpu (*((UINT64 *)Data));
+    MpIdr         = Fdt64ToCpu (*((UINT64 *)Data));
     CheckAffMask |= ARM_CORE_AFF3;
   } else {
-    MpIdr = fdt32_to_cpu (*((UINT32 *)Data));
+    MpIdr = Fdt32ToCpu (*((UINT32 *)Data));
   }
 
   if ((MpIdr & ~CheckAffMask) != 0) {
@@ -184,7 +185,7 @@ CpusNodeParser (
     return EFI_INVALID_PARAMETER;
   }
 
-  AddressCells = fdt_address_cells (Fdt, CpusNode);
+  AddressCells = FdtAddressCells (Fdt, CpusNode);
   if (AddressCells < 0) {
     ASSERT (0);
     return EFI_ABORTED;
@@ -306,13 +307,13 @@ GicCIntcNodeParser (
   // According to the DT bindings, this could be the:
   // "Interrupt source of the parent interrupt controller on secondary GICs"
   // but it is assumed that only one Gic is available.
-  Data = fdt_getprop (Fdt, GicIntcNode, "interrupts", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, GicIntcNode, "interrupts", &DataSize);
   if ((Data != NULL) && (DataSize == (IntCells * sizeof (UINT32)))) {
     GicCInfo                           = (CM_ARM_GICC_INFO *)GicCCmObjDesc->Data;
     GicCInfo->VGICMaintenanceInterrupt =
       FdtGetInterruptId ((CONST UINT32 *)Data);
     GicCInfo->Flags = DT_IRQ_IS_EDGE_TRIGGERED (
-                        fdt32_to_cpu (((UINT32 *)Data)[IRQ_FLAGS_OFFSET])
+                        Fdt32ToCpu (((UINT32 *)Data)[IRQ_FLAGS_OFFSET])
                         ) ?
                       EFI_ACPI_6_3_VGIC_MAINTENANCE_INTERRUPT_MODE_FLAGS :
                       0;
@@ -402,7 +403,7 @@ GicCv2IntcNodeParser (
 
   RegSize = (AddressCells + SizeCells) * sizeof (UINT32);
 
-  Data = fdt_getprop (Fdt, Gicv2IntcNode, "reg", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, Gicv2IntcNode, "reg", &DataSize);
   if ((Data == NULL)  ||
       (DataSize < 0)  ||
       ((DataSize % RegSize) != 0))
@@ -447,17 +448,17 @@ GicCv2IntcNodeParser (
   // Patch the relevant fields of the CM_ARM_GICC_INFO objects.
   for (Index = 0; Index < GicCCmObjDesc->Count; Index++) {
     if (AddressCells == 2) {
-      GicCInfo[Index].PhysicalBaseAddress = fdt64_to_cpu (*(UINT64 *)GicCValue);
+      GicCInfo[Index].PhysicalBaseAddress = Fdt64ToCpu (*(UINT64 *)GicCValue);
       GicCInfo[Index].GICH                = (GicHValue == NULL) ? 0 :
-                                            fdt64_to_cpu (*(UINT64 *)GicHValue);
+                                            Fdt64ToCpu (*(UINT64 *)GicHValue);
       GicCInfo[Index].GICV = (GicVValue == NULL) ? 0 :
-                             fdt64_to_cpu (*(UINT64 *)GicVValue);
+                             Fdt64ToCpu (*(UINT64 *)GicVValue);
     } else {
-      GicCInfo[Index].PhysicalBaseAddress = fdt32_to_cpu (*(UINT32 *)GicCValue);
+      GicCInfo[Index].PhysicalBaseAddress = Fdt32ToCpu (*(UINT32 *)GicCValue);
       GicCInfo[Index].GICH                = (GicHValue == NULL) ? 0 :
-                                            fdt32_to_cpu (*(UINT32 *)GicHValue);
+                                            Fdt32ToCpu (*(UINT32 *)GicHValue);
       GicCInfo[Index].GICV = (GicVValue == NULL) ? 0 :
-                             fdt32_to_cpu (*(UINT32 *)GicVValue);
+                             Fdt32ToCpu (*(UINT32 *)GicVValue);
     }
   } // for
 
@@ -540,10 +541,10 @@ GicCv3IntcNodeParser (
   }
 
   // The "#redistributor-regions" property is optional.
-  Data = fdt_getprop (Fdt, Gicv3IntcNode, "#redistributor-regions", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, Gicv3IntcNode, "#redistributor-regions", &DataSize);
   if ((Data != NULL) && (DataSize == sizeof (UINT32))) {
-    ASSERT (fdt32_to_cpu (*(UINT32 *)Data) > 1);
-    AdditionalRedistReg = fdt32_to_cpu (*(UINT32 *)Data) - 1;
+    ASSERT (Fdt32ToCpu (*(UINT32 *)Data) > 1);
+    AdditionalRedistReg = Fdt32ToCpu (*(UINT32 *)Data) - 1;
   } else {
     AdditionalRedistReg = 0;
   }
@@ -567,7 +568,7 @@ GicCv3IntcNodeParser (
     minItems: 2
     maxItems: 4096
   */
-  Data = fdt_getprop (Fdt, Gicv3IntcNode, "reg", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, Gicv3IntcNode, "reg", &DataSize);
   if ((Data == NULL)  ||
       (DataSize < 0)  ||
       ((DataSize % RegSize) != 0))
@@ -635,22 +636,22 @@ GicCv3IntcNodeParser (
       // GicR is discribed by the CM_ARM_GIC_REDIST_INFO object.
       GicCInfo[Index].GICRBaseAddress     = 0;
       GicCInfo[Index].PhysicalBaseAddress = (GicCValue == NULL) ? 0 :
-                                            fdt64_to_cpu (*(UINT64 *)GicCValue);
+                                            Fdt64ToCpu (*(UINT64 *)GicCValue);
       GicCInfo[Index].GICH = (GicHValue == NULL) ? 0 :
-                             fdt64_to_cpu (*(UINT64 *)GicHValue);
+                             Fdt64ToCpu (*(UINT64 *)GicHValue);
       GicCInfo[Index].GICV = (GicVValue == NULL) ? 0 :
-                             fdt64_to_cpu (*(UINT64 *)GicVValue);
+                             Fdt64ToCpu (*(UINT64 *)GicVValue);
     }
   } else {
     for (Index = 0; Index < GicCCmObjDesc->Count; Index++) {
       // GicR is discribed by the CM_ARM_GIC_REDIST_INFO object.
       GicCInfo[Index].GICRBaseAddress     = 0;
       GicCInfo[Index].PhysicalBaseAddress = (GicCValue == NULL) ? 0 :
-                                            fdt32_to_cpu (*(UINT32 *)GicCValue);
+                                            Fdt32ToCpu (*(UINT32 *)GicCValue);
       GicCInfo[Index].GICH = (GicHValue == NULL) ? 0 :
-                             fdt32_to_cpu (*(UINT32 *)GicHValue);
+                             Fdt32ToCpu (*(UINT32 *)GicHValue);
       GicCInfo[Index].GICV = (GicVValue == NULL) ? 0 :
-                             fdt32_to_cpu (*(UINT32 *)GicVValue);
+                             Fdt32ToCpu (*(UINT32 *)GicVValue);
     }
   }
 
@@ -736,7 +737,7 @@ GicCPmuNodeParser (
     return Status;
   }
 
-  Data = fdt_getprop (Fdt, PmuNode, "interrupts", &DataSize);
+  Data = (UINT8 *)FdtGetProperty (Fdt, PmuNode, "interrupts", &DataSize);
   if ((Data == NULL) || (DataSize != (IntCells * sizeof (UINT32)))) {
     // If error or not 1 interrupt.
     ASSERT (Data != NULL);
