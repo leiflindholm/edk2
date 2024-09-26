@@ -11,8 +11,8 @@
 **/
 
 #include <Library/BaseLib.h>
+#include <Library/FdtLib.h>
 #include <Library/FdtSerialPortAddressLib.h>
-#include <libfdt.h>
 
 /**
   Read the "reg" property of Node in DeviceTree as a UINT64 base address.
@@ -42,16 +42,16 @@ GetBaseAddress (
   OUT UINT64      *BaseAddress
   )
 {
-  CONST CHAR8  *NodeStatus;
+  CONST VOID   *NodeStatus;
   CONST VOID   *RegProp;
   INT32        PropSize;
 
-  NodeStatus = fdt_getprop (DeviceTree, Node, "status", NULL);
+  NodeStatus = FdtGetProperty (DeviceTree, Node, "status", NULL);
   if ((NodeStatus != NULL) && (AsciiStrCmp (NodeStatus, "okay") != 0)) {
     return RETURN_DEVICE_ERROR;
   }
 
-  RegProp = fdt_getprop (DeviceTree, Node, "reg", &PropSize);
+  RegProp = FdtGetProperty (DeviceTree, Node, "reg", &PropSize);
   if (RegProp == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -60,7 +60,7 @@ GetBaseAddress (
     return RETURN_BAD_BUFFER_SIZE;
   }
 
-  *BaseAddress = fdt64_to_cpu (ReadUnaligned64 (RegProp));
+  *BaseAddress = Fdt64ToCpu (ReadUnaligned64 (RegProp));
   return RETURN_SUCCESS;
 }
 
@@ -99,19 +99,19 @@ FdtSerialGetPorts (
 {
   INT32  Node;
 
-  if (fdt_check_header (DeviceTree) != 0) {
+  if (FdtCheckHeader (DeviceTree) != 0) {
     return RETURN_INVALID_PARAMETER;
   }
 
   Ports->NumberOfPorts = 0;
-  Node                 = fdt_next_node (DeviceTree, 0, NULL);
+  Node                 = FdtNextNode (DeviceTree, 0, NULL);
   while ((Node > 0) &&
          (Ports->NumberOfPorts < ARRAY_SIZE (Ports->BaseAddress)))
   {
     CONST CHAR8  *CompatProp;
     INT32        PropSize;
 
-    CompatProp = fdt_getprop (DeviceTree, Node, "compatible", &PropSize);
+    CompatProp = (CHAR8 *)FdtGetProperty (DeviceTree, Node, "compatible", &PropSize);
     if (CompatProp != NULL) {
       CONST CHAR8  *CompatItem;
 
@@ -133,7 +133,7 @@ FdtSerialGetPorts (
       }
     }
 
-    Node = fdt_next_node (DeviceTree, Node, NULL);
+    Node = FdtNextNode (DeviceTree, Node, NULL);
   }
 
   return Ports->NumberOfPorts > 0 ? RETURN_SUCCESS : RETURN_NOT_FOUND;
@@ -178,21 +178,21 @@ FdtSerialGetConsolePort (
   INT32          ConsoleNode;
   RETURN_STATUS  Status;
 
-  if (fdt_check_header (DeviceTree) != 0) {
+  if (FdtCheckHeader (DeviceTree) != 0) {
     return RETURN_INVALID_PARAMETER;
   }
 
-  ChosenNode = fdt_path_offset (DeviceTree, "/chosen");
+  ChosenNode = FdtPathOffset (DeviceTree, "/chosen");
   if (ChosenNode < 0) {
     return RETURN_NOT_FOUND;
   }
 
-  StdoutPathProp = fdt_getprop (
-                     DeviceTree,
-                     ChosenNode,
-                     "stdout-path",
-                     &PropSize
-                     );
+  StdoutPathProp = (CHAR8 *)FdtGetProperty (
+                              DeviceTree,
+                              ChosenNode,
+                              "stdout-path",
+                              &PropSize
+                              );
   if (StdoutPathProp == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -216,18 +216,18 @@ FdtSerialGetConsolePort (
     //
     // StdoutPathProp starts with an absolute node path.
     //
-    ConsoleNode = fdt_path_offset_namelen (
-                    DeviceTree,
-                    StdoutPathProp,
-                    (INT32)StdoutPathLength
-                    );
+    ConsoleNode = (INT32)FdtPathOffsetNameLen (
+                           DeviceTree,
+                           StdoutPathProp,
+                           (INT32)StdoutPathLength
+                           );
   } else {
     //
     // StdoutPathProp starts with an alias.
     //
     CONST CHAR8  *ResolvedStdoutPath;
 
-    ResolvedStdoutPath = fdt_get_alias_namelen (
+    ResolvedStdoutPath = FdtGetAliasNameLen (
                            DeviceTree,
                            StdoutPathProp,
                            (INT32)StdoutPathLength
@@ -236,7 +236,7 @@ FdtSerialGetConsolePort (
       return RETURN_NOT_FOUND;
     }
 
-    ConsoleNode = fdt_path_offset (DeviceTree, ResolvedStdoutPath);
+    ConsoleNode = FdtPathOffset (DeviceTree, ResolvedStdoutPath);
   }
 
   if (ConsoleNode < 0) {
