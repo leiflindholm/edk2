@@ -155,6 +155,10 @@ typedef struct {
   CHAR8     Data[];
 } FDT_PROPERTY;
 
+#define FdtGetHeader(Fdt, Field) \
+  (Fdt32ToCpu (((const FDT_HEADER *)(Fdt))->Field))
+#define FdtTotalSize(Fdt) (FdtGetHeader ((Fdt), TotalSize))
+
 /**
   Convert UINT16 data of the FDT blob to little-endian
 
