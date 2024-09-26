@@ -155,6 +155,10 @@ typedef struct {
   CHAR8     Data[];
 } FDT_PROPERTY;
 
+#ifndef FDT_TAGSIZE
+#define FDT_TAGSIZE     sizeof(UINT32)
+#endif
+
 #define FdtGetHeader(Fdt, Field) \
   (Fdt32ToCpu (((const FDT_HEADER *)(Fdt))->Field))
 #define FdtTotalSize(Fdt) (FdtGetHeader ((Fdt), TotalSize))

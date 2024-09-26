@@ -6,10 +6,10 @@
 
 **/
 
-#include <Library/FdtLib.h>
-#include <Uefi/UefiBaseType.h>
 #include <libfdt/libfdt/libfdt.h>
 #include <libfdt/libfdt/libfdt_internal.h>
+#include <Library/FdtLib.h>
+#include <Uefi/UefiBaseType.h>
 
 /**
   Convert UINT16 data of the FDT blob to little-endian
