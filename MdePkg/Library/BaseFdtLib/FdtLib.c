@@ -698,6 +698,24 @@ FdtNodeOffsetByCompatible (
   return fdt_node_offset_by_compatible (Fdt, StartOffset, Compatible);
 }
 
+/**
+   Retrieve address size for a bus represented in the tree
+
+  @param[in] Fdt            The pointer to FDT blob.
+  @param[in] NodeOffset     Offset of node to check.
+
+  @return Number of cells in the bus address, or negative error.
+**/
+INT32
+EFIAPI
+FdtAddressCells (
+  IN CONST VOID  *Fdt,
+  IN INT32       NodeOffset
+  )
+{
+  return fdt_address_cells (Fdt, NodeOffset);
+}
+
 /* Debug functions. */
 CONST
 CHAR8
