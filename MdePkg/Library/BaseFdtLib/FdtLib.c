@@ -6,6 +6,7 @@
 
 **/
 
+#include <Library/FdtLib.h>
 #include <Uefi/UefiBaseType.h>
 #include <libfdt/libfdt/libfdt.h>
 #include <libfdt/libfdt/libfdt_internal.h>
@@ -358,7 +359,7 @@ FdtGetProperty (
   IN INT32        *Length
   )
 {
-  return fdt_get_property (Fdt, NodeOffset, Name, Length);
+  return (FDT_PROPERTY *)fdt_get_property (Fdt, NodeOffset, Name, Length);
 }
 
 /**
@@ -439,7 +440,7 @@ FdtGetPropertyByOffset (
   IN INT32       *Length
   )
 {
-  return fdt_get_property_by_offset (Fdt, Offset, Length);
+  return (FDT_PROPERTY *)fdt_get_property_by_offset (Fdt, Offset, Length);
 }
 
 /**
