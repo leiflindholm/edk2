@@ -470,6 +470,23 @@ FdtNodeOffsetByPropValue (
   );
 
 /**
+  Look for a string in  a stringlist
+
+  @param[in] StringList     Pointer to stringlist to search.
+  @param[in] ListLength     Length of StringList.
+  @param[in] String         Pointer to string to search for.
+
+  @return 1 if found.
+**/
+INT32
+EFIAPI
+FdtStringListContains (
+  IN CONST CHAR8 *StringList,
+  IN INT32       ListLength,
+  IN CONST CHAR8 *String
+  );
+
+/**
   Returns a property with the given name from the given node.
 
   @param[in] Fdt            The pointer to FDT blob.
