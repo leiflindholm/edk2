@@ -91,6 +91,7 @@ FillWriteBuffer (
       }
     } else {
       DEBUG ((DEBUG_ERROR, "%a: Invalid Address Bytes\n", __func__));
+      AddressSize = 0;
       ASSERT (FALSE);
     }
 
