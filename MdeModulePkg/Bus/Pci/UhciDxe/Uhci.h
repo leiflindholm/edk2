@@ -13,7 +13,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Uefi.h>
 
 #include <Protocol/Usb2HostController.h>
-#include <Protocol/UsbHostController.h>
 #include <Protocol/PciIo.h>
 
 #include <Guid/EventGroup.h>
