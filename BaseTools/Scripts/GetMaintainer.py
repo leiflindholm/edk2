@@ -163,9 +163,9 @@ def parse_maintainers_file(filename):
 
         return sectionlist
 
-def get_modified_files(repo, args):
-    """Returns a list of the files modified by the commit specified in 'args'."""
-    commit = repo.commit(args.commit)
+def get_modified_files(repo, refepec):
+    """Returns a list of the files modified by the commit specified in 'refspec'."""
+    commit = repo.commit(refspec)
     return commit.stats.files
 
 if __name__ == '__main__':
@@ -194,7 +194,7 @@ if __name__ == '__main__':
     if ARGS.lookup:
         FILES = [ARGS.lookup.replace('\\','/')]
     else:
-        FILES = get_modified_files(REPO, ARGS)
+        FILES = get_modified_files(REPO, ARGS.commit)
 
     # Accumulate a sorted list of addresses
     ADDRESSES = set([])
