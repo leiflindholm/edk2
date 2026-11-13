@@ -6,6 +6,7 @@
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 
+import io
 import sys
 
 try:
@@ -22,3 +23,17 @@ def locate_repo():
         print("It doesn't look like we're inside a git repository - aborting.")
         sys.exit(2)
     return repo
+
+def read_git_file (repo, refspec, filename):
+    """Read a file from repo at a given refspec"""
+    commit = repo.commit(refspec)
+
+    try:
+        file_object = commit.tree[filename]
+    except KeyError:
+        print(f'File "{filename}" not found @ {refspec}')
+        return False
+
+    with io.BytesIO(file_object.data_stream.read()) as f:
+        source_bytes = f.read().decode('utf-8')
+        return source_bytes
