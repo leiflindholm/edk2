@@ -9,6 +9,7 @@
 
 from __future__ import print_function
 import argparse
+import git_helpers
 import os.path
 import re
 import sys
@@ -87,16 +88,6 @@ OPTIONS = [
     ]
 
 
-def locate_repo():
-    """Opens a Repo object for the current tree, searching upwards in the directory hierarchy."""
-    try:
-        repo = git.Repo(path='.', search_parent_directories=True)
-    except (git.InvalidGitRepositoryError, git.NoSuchPathError):
-        print("It doesn't look like we're inside a git repository - aborting.")
-        sys.exit(2)
-    return repo
-
-
 def fuzzy_match_repo_url(one, other):
     """Compares two repository URLs, ignoring protocol and optional trailing '.git'."""
     oneresult   = re.match(r'.*://(?P<oneresult>.*?)(\.git)*$', one)
@@ -160,7 +151,7 @@ if __name__ == '__main__':
                         required=False)
     ARGS = PARSER.parse_args()
 
-    REPO = locate_repo()
+    REPO = git_helpers.locate_repo()
     if REPO.bare:
         print('Bare repo - please check out an upstream one!')
         sys.exit(6)

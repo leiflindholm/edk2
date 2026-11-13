@@ -10,9 +10,9 @@ from __future__ import print_function
 from collections import defaultdict
 from collections import OrderedDict
 import argparse
+import git_helpers
 import os
 import re
-import SetupGit
 
 EXPRESSIONS = {
     'exclude':    re.compile(r'^X:\s*(?P<exclude>.*?)\r*$'),
@@ -185,7 +185,7 @@ if __name__ == '__main__':
                         required=False)
     ARGS = PARSER.parse_args()
 
-    REPO = SetupGit.locate_repo()
+    REPO = git_helpers.locate_repo()
 
     CONFIG_FILE = os.path.join(REPO.working_dir, 'Maintainers.txt')
 
