@@ -15,10 +15,14 @@ except ImportError:
     print('Unable to load "gitpython" module - please install and try again.')
     sys.exit(1)
 
-def get_modified_files(repo, refspec):
-    """Returns a list of the files modified by the commit specified in 'refspec'."""
+def get_commit_modifications(repo, refspec):
+    """Returns the Stats object for the commit specified in 'refspec'."""
     commit = repo.commit(refspec)
     return commit.stats.files
+
+def get_modified_files(repo, refspec):
+    """Returns a list of the files modified by the commit specified in 'refspec'."""
+    return list(get_commit_modifications(repo, refspec).keys())
 
 def locate_repo():
     """Opens a Repo object for the current tree, searching upwards in the directory hierarchy."""
