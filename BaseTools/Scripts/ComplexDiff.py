@@ -55,20 +55,15 @@ if __name__ == '__main__':
         b_source_buf = git_helpers.read_git_file(REPO, ARGS.commit, FILE)
 
         if a_source_buf:
-            a_functions = analyze_source_buf(a_source_buf, FILE)
+            a_analysis.append(analyze_source_buf(a_source_buf, FILE))
 
-        b_functions = analyze_source_buf(b_source_buf, FILE)
+        b_analysis.append(analyze_source_buf(b_source_buf, FILE))
 
-        if a_source_buf and a_functions:
-            a_files = get_analyzed_files(a_functions)
-
-        b_files = get_analyzed_files(b_functions)
-
-        for b_file in b_files:
-            path = b_file['filename']
-            if a_source_buf:
-                for a_file in a_files:
-                    if a_file['filename'] == path:
-                        print('{} in both')
-                    else:
-                        print('{} only in b')
+    for file_data in b_analysis:
+        path = file_data['filename']
+        
+        for ref_data in a_analysis:
+            if ref_data['filename'] == path:
+                print('{} in both')
+            else:
+                print('{} only in b')
