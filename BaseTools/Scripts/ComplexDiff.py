@@ -63,3 +63,12 @@ if __name__ == '__main__':
             a_files = get_analyzed_files(a_functions)
 
         b_files = get_analyzed_files(b_functions)
+
+        for b_file in b_files:
+            path = b_file['filename']
+            if a_source_buf:
+                for a_file in a_files:
+                    if a_file['filename'] == path:
+                        print('{} in both')
+                    else:
+                        print('{} only in b')
