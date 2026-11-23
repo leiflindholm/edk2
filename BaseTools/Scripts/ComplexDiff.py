@@ -48,6 +48,9 @@ if __name__ == '__main__':
     else:
         B_FILES = git_helpers.get_modified_files(REPO, ARGS.commit)
 
+    a_analysis = []
+    b_analysis = []
+
     for FILE in B_FILES:
         print(FILE, ARGS.refcommit, ARGS.commit)
 
@@ -60,10 +63,12 @@ if __name__ == '__main__':
         b_analysis.append(analyze_source_buf(b_source_buf, FILE))
 
     for file_data in b_analysis:
-        path = file_data['filename']
+        path = file_data.__dict__['filename']
         
-        for ref_data in a_analysis:
-            if ref_data['filename'] == path:
+        for ref_analysis in a_analysis:
+            refpath = ref_analysis.__dict__['filename'] == path
+            if refpath:
                 print('{} in both')
-            else:
-                print('{} only in b')
+
+                print(file_data.__dict__)
+                    
